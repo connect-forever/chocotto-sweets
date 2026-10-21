@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>出店者募集</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --card: #ffffff; --text: #1f2328; --sub: #5b6470; --line: #d8dde3;
+    --accent: #8a4b1f; --accent-text: #ffffff; --ok: #1a7f4b; --few: #b26a00; --full: #b3261e;
+    --err-bg: #fdecea; --info-bg: #fbf1e8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14171a; --card: #1e2227; --text: #eceff2; --sub: #a3acb7; --line: #39414a;
+      --accent: #e0a070; --accent-text: #1a0f06; --ok: #4cc38a; --few: #f0b34a; --full: #ff8a80;
+      --err-bg: #3a1f1d; --info-bg: #332419;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Noto Sans JP", Meiryo, sans-serif;
+    line-height: 1.6; -webkit-text-size-adjust: 100%; }
+  .wrap { max-width: 800px; margin: 0 auto; padding: 16px; }
+  h1 { font-size: 1.35rem; margin: 8px 0 4px; }
+  .meta { color: var(--sub); font-size: .92rem; margin: 0 0 16px; white-space: pre-wrap; }
+  .box { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin-bottom: 14px; }
+  .notice { white-space: pre-wrap; font-size: .9rem; border: 1px solid var(--line);
+    border-radius: 8px; padding: 12px; background: var(--bg); margin-bottom: 12px; }
+  .agreebox { display: flex; gap: 12px; align-items: center; border: 2px solid var(--accent); border-radius: 10px;
+    padding: 14px; margin-bottom: 18px; font-weight: 700; cursor: pointer; background: var(--info-bg); }
+  .agreebox input { width: 26px; height: 26px; flex: none; margin: 0; }
+  label.field { display: block; font-weight: 600; margin-bottom: 14px; }
+  .req { color: var(--full); font-size: .8rem; margin-left: 4px; }
+  .hint { display: block; font-weight: 400; color: var(--sub); font-size: .85rem; margin-top: 2px; }
+  input[type=text], input[type=email], input[type=tel], select, textarea {
+    width: 100%; font-size: 16px; padding: 11px 12px; margin-top: 6px;
+    border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--text); }
+  textarea { min-height: 84px; resize: vertical; }
+  fieldset { border: 0; padding: 0; margin: 0 0 14px; }
+  legend { font-weight: 600; padding: 0; margin-bottom: 6px; }
+  .opt { display: flex; gap: 10px; align-items: flex-start; border: 1px solid var(--line);
+    border-radius: 10px; padding: 12px; margin-bottom: 8px; cursor: pointer; }
+  .opt input { margin-top: 5px; width: 18px; height: 18px; flex: none; }
+  .opt.sel { border-color: var(--accent); background: var(--info-bg); }
+  .opt .t { font-weight: 600; }
+  .opt .d { color: var(--sub); font-size: .85rem; }
+  .price { font-weight: 700; margin-left: 8px; }
+  .consent { display: flex; gap: 10px; align-items: flex-start; font-size: .9rem; margin-bottom: 10px; }
+  .consent input { margin-top: 4px; width: 18px; height: 18px; flex: none; }
+  .consent.strong { font-weight: 600; }
+  button { width: 100%; font-size: 1.05rem; font-weight: 700; padding: 14px; border: 0; border-radius: 10px;
+    background: var(--accent); color: var(--accent-text); cursor: pointer; }
+  button:disabled { opacity: .55; cursor: default; }
+  .err { background: var(--err-bg); border: 1px solid var(--full); color: var(--text);
+    border-radius: 10px; padding: 12px; margin-bottom: 14px; display: none; white-space: pre-wrap; }
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  .result h2 { font-size: 1.2rem; margin: 0 0 8px; }
+  .note { font-size: .88rem; color: var(--sub); margin-top: 12px; white-space: pre-wrap; }
+  .estimate { background: var(--info-bg); border-radius: 10px; padding: 10px 12px; margin: 0 0 14px; font-size: .92rem; display: none; white-space: pre-wrap; }
+  .estimate strong { font-size: 1.05rem; }
+
+  .ticket { border: 2px solid var(--accent); border-radius: 14px; padding: 16px; margin: 12px 0; background: var(--info-bg); }
+  .ticket .ev { font-weight: 700; font-size: 1rem; }
+  .ticket .dt { color: var(--sub); font-size: .88rem; margin-bottom: 10px; }
+  .ticket .lab { color: var(--sub); font-size: .8rem; margin-top: 10px; }
+  .ticket .num { font-size: 2.2rem; font-weight: 800; letter-spacing: .06em; line-height: 1.2; }
+  .ticket .blk { font-size: 1.2rem; font-weight: 700; line-height: 1.3; }
+  .keep { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 12px; margin: 12px 0; font-size: .92rem; }
+  .keep strong { display: block; margin-bottom: 4px; }
+  .keep ul { margin: 6px 0 0; padding-left: 1.2em; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1 id="title"></h1>
+  <p class="meta" id="meta"></p>
+
+  <div id="loading" class="box">読み込んでいます…</div>
+  <div id="fatal" class="box" style="display:none">
+    <strong>募集ページを読み込めませんでした。</strong><br>
+    電波の良い場所で、もう一度お試しください。<br>
+    <button type="button" id="retry" style="margin-top:12px">もう一度読み込む</button>
+    <div id="fatalWhy" class="note" style="display:none"></div>
+  </div>
+
+  <div id="closed" class="box" style="display:none">
+    <strong>現在、出店者の募集を行っていません。</strong><br>
+    募集は終了したか、まだ始まっていません。
+  </div>
+
+  <form id="form" class="box" novalidate style="display:none">
+    <div id="err" class="err" role="alert"></div>
+
+    <div id="notice" class="notice"></div>
+    <label class="agreebox">
+      <input type="checkbox" id="agree">
+      <span>上記確認事項に同意します<span class="req">必須</span></span>
+    </label>
+
+    <label class="field">出店者名(屋号)<span class="req">必須</span>
+      <input type="text" id="shop" autocomplete="organization" maxlength="80">
+    </label>
+
+    <label class="field">ご担当者名<span class="req">必須</span>
+      <span class="hint">記入例:中村太郎 なかむらたろう</span>
+      <input type="text" id="person" autocomplete="name" maxlength="60">
+    </label>
+
+    <label class="field">お電話番号<span class="req">必須</span>
+      <span class="hint">記入例:090-1234-5678</span>
+      <input type="tel" id="phone" autocomplete="tel" inputmode="tel" maxlength="20">
+    </label>
+
+    <label class="field">メールアドレス<span class="req">必須</span>
+      <span class="hint">連絡のつきやすいメールアドレスを記載してください。選定結果はこのメールに届きます</span>
+      <input type="email" id="email" autocomplete="email" inputmode="email" maxlength="120">
+    </label>
+
+    <label class="field">SNSアカウント(任意)
+      <span class="hint">SNSアカウントがありましたら教えてください</span>
+      <input type="text" id="sns" maxlength="200">
+    </label>
+
+    <fieldset>
+      <legend>出店希望日をお選びください<span class="req">必須</span><span class="hint">両日出店の場合は、両方にチェックしてください</span></legend>
+      <div id="days"></div>
+    </fieldset>
+
+    <label class="field">当日の内容(メニューなど)<span class="req">必須</span>
+      <textarea id="menu" maxlength="600"></textarea>
+    </label>
+
+    <fieldset>
+      <legend>出店形態<span class="req">必須</span><span class="hint">当日の売上の10％を運営費として頂戴いたします(テント(物販)を除く)</span></legend>
+      <div id="types"></div>
+    </fieldset>
+
+    <div id="estimate" class="estimate" aria-live="polite"></div>
+
+    <fieldset>
+      <legend>発電機使用<span class="req">必須</span></legend>
+      <label class="opt"><input type="radio" name="gen" value="はい"><div class="t">はい</div></label>
+      <label class="opt"><input type="radio" name="gen" value="いいえ"><div class="t">いいえ</div></label>
+    </fieldset>
+
+    <label class="field">ご意見・ご要望(任意)
+      <textarea id="note" maxlength="600"></textarea>
+    </label>
+
+    <div class="hp" aria-hidden="true">
+      <label>Website<input type="text" id="website" tabindex="-1" autocomplete="off"></label>
+    </div>
+
+    <label class="consent">
+      <input type="checkbox" id="consent">
+      <span id="purpose"></span>
+    </label>
+    <p class="note" style="margin-top:0">同意いただける場合はチェックを入れてください。</p>
+
+    <button type="submit" id="submit">応募する</button>
+  </form>
+
+  <div id="result" class="box result" style="display:none"></div>
+</div>
+
+<script>
+  // ------------------------------------------------------------
+  // このページは、GitHub Pages など(Googleの外)に置いて使います。
+  // 受付システム(Google Apps Script)のURLは、同じ場所に置いた url.txt に書きます。
+  // ------------------------------------------------------------
+  let CONFIG = null;
+  let EXEC_URL = '';
+  const $ = function (id) { return document.getElementById(id); };
+
+  // Googleの受け口に送る。ログイン情報(Cookie)は付けない(credentials:'omit')ので、
+  // スマホで複数のGoogleアカウントにログインしていても影響を受けない。
+  // Content-Type は text/plain にする(ブラウザの事前確認(preflight)を避けるため)。
+  function callApi(payload) {
+    return fetch(EXEC_URL, {
+      method: 'POST', mode: 'cors', credentials: 'omit', redirect: 'follow', cache: 'no-store',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    }).then(function (res) {
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return res.text();
+    }).then(function (txt) {
+      try { return JSON.parse(txt); } catch (e) { throw new Error('bad json'); }
+    });
+  }
+
+  function loadConfig() {
+    $('loading').style.display = 'block';
+    $('fatal').style.display = 'none';
+    fetch('url.txt?t=' + Date.now(), { cache: 'no-store' })
+      .then(function (r) { if (!r.ok) throw new Error('url.txt'); return r.text(); })
+      .then(function (t) {
+        EXEC_URL = String(t || '').replace(/^﻿/, '').trim().split(/\s+/)[0] || '';
+        if (!/^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(EXEC_URL)) throw new Error('url.txt の中身が、受付システムのURL(…/exec)ではありません');
+        return callApi({ action: 'config' });
+      })
+      .then(function (cfg) {
+        if (!cfg || !Array.isArray(cfg.types)) throw new Error('config');
+        CONFIG = cfg;
+        $('loading').style.display = 'none';
+        $('title').textContent = CONFIG.title || '出店者募集';
+        $('meta').textContent = [CONFIG.date ? '開催日時:' + CONFIG.date : '', CONFIG.venue ? '会場:' + CONFIG.venue : '',
+          CONFIG.deadline ? '応募締切:' + CONFIG.deadline : ''].filter(Boolean).join('\n');
+        document.title = (CONFIG.title || 'イベント') + ' 出店者募集';
+        $('purpose').textContent = CONFIG.purpose || 'お預かりした個人情報は、本イベントの運営のみに利用します。';
+        if (!CONFIG.open || CONFIG.types.length === 0 || !Array.isArray(CONFIG.days) || CONFIG.days.length === 0) {
+          $('closed').style.display = 'block';
+        } else {
+          $('form').style.display = 'block';
+          buildForm();
+        }
+      })
+      .catch(function (e) {
+        console.error(e);
+        $('loading').style.display = 'none';
+        $('fatal').style.display = 'block';
+        const why = $('fatalWhy');
+        if (/url\.txt/.test(String(e && e.message))) { why.textContent = '(運営の方へ:' + e.message + ')'; why.style.display = 'block'; }
+      });
+  }
+  $('retry').addEventListener('click', loadConfig);
+  loadConfig();
+
+  function yen(n) { return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+  function feeText(t) {
+    const base = t.fee > 0 ? yen(t.fee) + '円/日' : '出店料なし';
+    return base + (t.commission && CONFIG.rate > 0 ? ' + 当日売上' + CONFIG.rate + '%' : '');
+  }
+
+  function buildForm() {
+    $('notice').textContent = CONFIG.notice || '';
+    if (!CONFIG.notice) $('notice').style.display = 'none';
+
+    CONFIG.days.forEach(function (d) {
+      const lab = document.createElement('label');
+      lab.className = 'opt';
+      const inp = document.createElement('input');
+      inp.type = 'checkbox'; inp.name = 'days'; inp.value = d;
+      const t = document.createElement('div'); t.className = 't'; t.textContent = d;
+      lab.appendChild(inp); lab.appendChild(t);
+      $('days').appendChild(lab);
+      inp.addEventListener('change', refreshSelected);
+    });
+
+    CONFIG.types.forEach(function (ty) {
+      const lab = document.createElement('label');
+      lab.className = 'opt';
+      const inp = document.createElement('input');
+      inp.type = 'radio'; inp.name = 'type'; inp.value = ty.name;
+      const box = document.createElement('div');
+      const t = document.createElement('div');
+      t.className = 't'; t.textContent = ty.name;
+      const pr = document.createElement('span'); pr.className = 'price'; pr.textContent = feeText(ty);
+      t.appendChild(pr);
+      box.appendChild(t);
+      const dparts = [];
+      if (ty.desc) dparts.push(ty.desc);
+      if (ty.docs) dparts.push('出店確定後に、営業許可証などの書類提出が必要です');
+      if (dparts.length) { const d = document.createElement('div'); d.className = 'd'; d.textContent = dparts.join(' / '); box.appendChild(d); }
+      lab.appendChild(inp); lab.appendChild(box);
+      $('types').appendChild(lab);
+      inp.addEventListener('change', refreshSelected);
+    });
+
+    document.querySelectorAll('input[name=gen]').forEach(function (i) { i.addEventListener('change', refreshSelected); });
+  }
+
+  // 電話番号の形のチェック(全角・ハイフン・空白・+81 もOK)。日本の番号(0から始まる10〜11桁)でなければ空文字
+  function normalizePhone(s) {
+    let x = String(s || '')
+      .replace(/[０-９]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) - 0xFEE0); })
+      .replace(/[\s\-‐‑‒–—―ー−－()（）.]/g, '');
+    if (/^\+81/.test(x)) x = '0' + x.slice(3);
+    return /^0\d{9,10}$/.test(x) ? x : '';
+  }
+
+  function selectedDays() {
+    return Array.prototype.map.call(document.querySelectorAll('input[name=days]:checked'), function (i) { return i.value; });
+  }
+
+  // 選んだ内容から、出店料の目安を出す
+  function refreshEstimate() {
+    const box = $('estimate');
+    const sel = document.querySelector('input[name=type]:checked');
+    const days = selectedDays();
+    if (!sel || days.length === 0) { box.style.display = 'none'; return; }
+    const ty = CONFIG.types.filter(function (x) { return x.name === sel.value; })[0];
+    if (!ty) { box.style.display = 'none'; return; }
+    box.textContent = '';
+    const s = document.createElement('strong');
+    s.textContent = ty.fee > 0 ? '出店料の合計:' + yen(ty.fee * days.length) + '円(' + yen(ty.fee) + '円 × ' + days.length + '日)' : '出店料:なし';
+    box.appendChild(s);
+    const d = document.createElement('div');
+    d.textContent = (ty.commission && CONFIG.rate > 0 ? 'このほかに、当日売上の' + CONFIG.rate + '%を運営費としていただきます。\n' : '') +
+      '出店料は、出店が確定してからお支払いいただきます(応募の時点では、お支払いは不要です)。';
+    box.appendChild(d);
+    box.style.display = 'block';
+  }
+
+  function refreshSelected() {
+    document.querySelectorAll('.opt').forEach(function (l) {
+      l.classList.toggle('sel', l.querySelector('input').checked);
+    });
+    refreshEstimate();
+  }
+
+  function showError(msg) {
+    const e = $('err');
+    e.textContent = msg;
+    e.style.display = 'block';
+    e.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  $('form').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    $('err').style.display = 'none';
+    const ty = document.querySelector('input[name=type]:checked');
+    const gen = document.querySelector('input[name=gen]:checked');
+    const data = {
+      agree: $('agree').checked,
+      shop: $('shop').value.trim(),
+      person: $('person').value.trim(),
+      phone: $('phone').value.trim(),
+      email: $('email').value.trim(),
+      sns: $('sns').value.trim(),
+      days: selectedDays(),
+      menu: $('menu').value.trim(),
+      type: ty ? ty.value : '',
+      gen: gen ? gen.value : '',
+      note: $('note').value.trim(),
+      consent: $('consent').checked,
+      website: $('website').value
+    };
+    if (!data.agree) return showError('確認事項を読んで、「同意します」にチェックを入れてください。');
+    if (!data.shop) return showError('出店者名を入力してください。');
+    if (!data.person) return showError('ご担当者名を入力してください。');
+    if (!normalizePhone(data.phone)) return showError('電話番号を、数字で入力してください(例:09012345678)。ハイフンはあってもなくても大丈夫です。');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) return showError('メールアドレスの形式が正しくありません。');
+    if (data.days.length === 0) return showError('出店希望日を選んでください。');
+    if (!data.menu) return showError('当日の内容(メニューなど)を入力してください。');
+    if (!data.type) return showError('出店形態を選んでください。');
+    if (!data.gen) return showError('発電機の使用の有無を選んでください。');
+    if (!data.consent) return showError('個人情報の取り扱いへの同意にチェックを入れてください。');
+
+    const btn = $('submit');
+    btn.disabled = true;
+    btn.textContent = '送信中…';
+    data.action = 'submit';
+    callApi(data)
+      .then(function (r) {
+        if (!r || !r.ok) {
+          btn.disabled = false; btn.textContent = '応募する';
+          return showError((r && r.message) || '送信に失敗しました。もう一度お試しください。');
+        }
+        showResult(r, data);
+      })
+      .catch(function () {
+        btn.disabled = false; btn.textContent = '応募する';
+        showError('通信に失敗しました。電波の良い場所で、もう一度お試しください。\n(応募が二重にならないよう、受付メールが届いていないかもご確認ください)');
+      });
+  });
+
+  function showResult(r, input) {
+    $('form').style.display = 'none';
+    const box = $('result');
+    box.innerHTML = '';
+
+    const h2 = document.createElement('h2');
+    h2.textContent = 'ご応募を受け付けました';
+    box.appendChild(h2);
+
+    const t = document.createElement('div');
+    t.className = 'ticket';
+    function line(cls, text) {
+      const d = document.createElement('div'); d.className = cls; d.textContent = text; t.appendChild(d); return d;
+    }
+    line('ev', CONFIG.title || 'イベント');
+    line('dt', [CONFIG.date, CONFIG.venue].filter(Boolean).join(' / '));
+    line('lab', '応募番号');
+    line('num', r.id);
+    line('lab', '出店者名'); line('blk', r.shop);
+    line('lab', '出店希望日'); line('blk', r.days);
+    line('lab', '出店形態'); line('blk', r.type);
+    if (r.fee > 0) line('lab', '出店料(確定後にお支払い):' + yen(r.fee) + '円' + (r.commission && r.rate > 0 ? ' + 当日売上' + r.rate + '%' : ''));
+    box.appendChild(t);
+
+    const keep = document.createElement('div');
+    keep.className = 'keep';
+    const st = document.createElement('strong');
+    st.textContent = 'この画面を保存してください(スクリーンショット)。この時点では、出店はまだ確定していません';
+    keep.appendChild(st);
+    const ul = document.createElement('ul');
+    [
+      '運営で選定のうえ、出店の可否をメールでご連絡します。' + (r.resultInfo ? '(' + r.resultInfo + ')' : ''),
+      '出店が確定した方には、出店料のお支払い方法と、連絡用LINEのご案内をお送りします。',
+      '応募番号(' + r.id + ')を控えておいてください。お問い合わせのときに使います。',
+      '受付の確認メールは送られません。この画面が、応募した証拠になります。'
+    ].forEach(function (s) { const li = document.createElement('li'); li.textContent = s; ul.appendChild(li); });
+    keep.appendChild(ul);
+    box.appendChild(keep);
+
+    const n = document.createElement('p');
+    n.className = 'note';
+    n.textContent = '選定結果は、入力したメールアドレスに届きます。迷惑メールフォルダに入らないよう、お気をつけください。';
+    box.appendChild(n);
+
+    box.style.display = 'block';
+    window.scrollTo(0, 0);
+  }
+</script>
+</body>
+</html>
