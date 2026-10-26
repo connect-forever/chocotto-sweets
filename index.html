@@ -26,8 +26,11 @@
   h1 { font-size: 1.35rem; margin: 8px 0 4px; }
   .meta { color: var(--sub); font-size: .92rem; margin: 0 0 16px; white-space: pre-wrap; }
   .box { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin-bottom: 14px; }
-  .notice { white-space: pre-wrap; font-size: .9rem; border: 1px solid var(--line);
+  .notice { font-size: .9rem; border: 1px solid var(--line);
     border-radius: 8px; padding: 12px; background: var(--bg); margin-bottom: 12px; }
+  .notice .ln { padding-left: 1em; text-indent: -1em; min-height: 1.2em; }
+  .notice .ln.c { text-indent: 0; }
+  .notice .ln.h { padding-left: 0; text-indent: 0; }
   .agreebox { display: flex; gap: 12px; align-items: center; border: 2px solid var(--accent); border-radius: 10px;
     padding: 14px; margin-bottom: 18px; font-weight: 700; cursor: pointer; background: var(--info-bg); }
   .agreebox input { width: 26px; height: 26px; flex: none; margin: 0; }
@@ -176,6 +179,20 @@
   // このページは、GitHub Pages など(Googleの外)に置いて使います。
   // 受付システム(Google Apps Script)のURLは、同じ場所に置いた url.txt に書きます。
   // ------------------------------------------------------------
+  // 注意書き:◇や※で始まる行は、折り返した2行目以降を文字の位置にそろえる(ぶら下げインデント)
+  function renderNotice_(txt) {
+    const box = $('notice');
+    box.textContent = '';
+    String(txt).replace(/\r/g, '').split('\n').forEach(function (line) {
+      const d = document.createElement('div');
+      const t = line.replace(/^[ \u3000\t]+/, '');
+      if (!t) { d.className = 'ln h'; d.innerHTML = '&nbsp;'; }
+      else if (/^[◇※]/.test(t)) { d.className = 'ln'; d.textContent = t; }
+      else if (/^[ \u3000\t]/.test(line)) { d.className = 'ln c'; d.textContent = t; }
+      else { d.className = 'ln h'; d.textContent = t; }
+      box.appendChild(d);
+    });
+  }
   let CONFIG = null;
   let EXEC_URL = '';
   const $ = function (id) { return document.getElementById(id); };
@@ -240,7 +257,7 @@
   }
 
   function buildForm() {
-    $('notice').textContent = CONFIG.notice || '';
+    renderNotice_(CONFIG.notice || '');
     if (!CONFIG.notice) $('notice').style.display = 'none';
 
     CONFIG.days.forEach(function (d) {
