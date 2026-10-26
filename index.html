@@ -128,8 +128,14 @@
       <div id="days"></div>
     </fieldset>
 
-    <label class="field">当日の内容(メニューなど)<span class="req">必須</span>
-      <textarea id="menu" maxlength="600"></textarea>
+    <label class="field">当日の内容:メイン商材(メニューなど)<span class="req">必須</span>
+      <span class="hint">必ず、スイーツ・デザート・甘味(和洋中を問いません)を入れてください</span>
+      <textarea id="menuMain" maxlength="280"></textarea>
+    </label>
+
+    <label class="field">当日の内容:サブ商材(任意)
+      <span class="hint">スイーツ以外の商品があれば、書いてください(なければ空欄でOK)</span>
+      <textarea id="menuSub" maxlength="280"></textarea>
     </label>
 
     <fieldset>
@@ -330,7 +336,7 @@
       email: $('email').value.trim(),
       sns: $('sns').value.trim(),
       days: selectedDays(),
-      menu: $('menu').value.trim(),
+      menu: '',
       type: ty ? ty.value : '',
       gen: gen ? gen.value : '',
       note: $('note').value.trim(),
@@ -343,7 +349,9 @@
     if (!normalizePhone(data.phone)) return showError('電話番号を、数字で入力してください(例:09012345678)。ハイフンはあってもなくても大丈夫です。');
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) return showError('メールアドレスの形式が正しくありません。');
     if (data.days.length === 0) return showError('出店希望日を選んでください。');
-    if (!data.menu) return showError('当日の内容(メニューなど)を入力してください。');
+    const mMain = $('menuMain').value.trim(), mSub = $('menuSub').value.trim();
+    if (!mMain) return showError('メイン商材(スイーツ・デザート・甘味のメニューなど)を入力してください。');
+    data.menu = '【メイン商材】' + mMain + (mSub ? '\n【サブ商材】' + mSub : '');
     if (!data.type) return showError('出店形態を選んでください。');
     if (!data.gen) return showError('発電機の使用の有無を選んでください。');
     if (!data.consent) return showError('個人情報の取り扱いへの同意にチェックを入れてください。');
