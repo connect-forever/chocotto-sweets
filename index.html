@@ -78,7 +78,6 @@
 <body>
 <div class="wrap">
   <h1 id="title"></h1>
-  <p class="meta" id="meta"></p>
 
   <div id="loading" class="box">読み込んでいます…</div>
   <div id="fatal" class="box" style="display:none">
@@ -228,8 +227,6 @@
         CONFIG = cfg;
         $('loading').style.display = 'none';
         $('title').textContent = CONFIG.title || '出店者募集';
-        $('meta').textContent = [CONFIG.date ? '開催日時:' + CONFIG.date : '', CONFIG.venue ? '会場:' + CONFIG.venue : '',
-          CONFIG.deadline ? '応募締切:' + CONFIG.deadline : ''].filter(Boolean).join('\n');
         document.title = (CONFIG.title || 'イベント') + ' 出店者募集';
         $('purpose').textContent = CONFIG.purpose || 'お預かりした個人情報は、本イベントの運営のみに利用します。';
         if (!CONFIG.open || CONFIG.types.length === 0 || !Array.isArray(CONFIG.days) || CONFIG.days.length === 0) {
