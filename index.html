@@ -26,7 +26,8 @@
   h1 { font-size: 1.35rem; margin: 8px 0 4px; }
   .meta { color: var(--sub); font-size: .92rem; margin: 0 0 16px; white-space: pre-wrap; }
   .box { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin-bottom: 14px; }
-  .notice { font-size: .9rem; border: 1px solid var(--line);    border-radius: 8px; padding: 12px; background: var(--bg); margin-bottom: 12px; }
+  .notice { font-size: .9rem; border: 1px solid var(--line);
+    border-radius: 8px; padding: 12px; background: var(--bg); margin-bottom: 12px; }
   .notice .ln { padding-left: 1em; text-indent: -1em; min-height: 1.2em; }
   .notice .ln.c { text-indent: 0; }
   .notice .ln.h { padding-left: 0; text-indent: 0; }
@@ -129,14 +130,9 @@
       <div id="days"></div>
     </fieldset>
 
-    <label class="field">当日の内容:メイン商材(メニューなど)<span class="req">必須</span>
-      <span class="hint">必ず、スイーツ・デザート・甘味(和洋中を問いません)を入れてください</span>
-      <textarea id="menuMain" maxlength="280"></textarea>
-    </label>
-
-    <label class="field">当日の内容:サブ商材(任意)
-      <span class="hint">スイーツ以外の商品があれば、書いてください(なければ空欄でOK)</span>
-      <textarea id="menuSub" maxlength="280"></textarea>
+    <label class="field">当日の内容(メニュー・商品など)<span class="req">必須</span>
+      <span class="hint">販売・提供する内容を書いてください。飲食の方は、スイーツ・デザート・甘味(和洋中を問いません)を1品以上入れていただけると嬉しいです。物販・縁日なども歓迎です</span>
+      <textarea id="menuMain" maxlength="560"></textarea>
     </label>
 
     <fieldset>
@@ -362,9 +358,9 @@
     if (!normalizePhone(data.phone)) return showError('電話番号を、数字で入力してください(例:09012345678)。ハイフンはあってもなくても大丈夫です。');
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) return showError('メールアドレスの形式が正しくありません。');
     if (data.days.length === 0) return showError('出店希望日を選んでください。');
-    const mMain = $('menuMain').value.trim(), mSub = $('menuSub').value.trim();
-    if (!mMain) return showError('メイン商材(スイーツ・デザート・甘味のメニューなど)を入力してください。');
-    data.menu = '【メイン商材】' + mMain + (mSub ? '\n【サブ商材】' + mSub : '');
+    const mMain = $('menuMain').value.trim();
+    if (!mMain) return showError('当日の内容(メニュー・商品など)を入力してください。');
+    data.menu = mMain;
     if (!data.type) return showError('出店形態を選んでください。');
     if (!data.gen) return showError('発電機の使用の有無を選んでください。');
     if (!data.consent) return showError('個人情報の取り扱いへの同意にチェックを入れてください。');
