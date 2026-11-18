@@ -136,7 +136,7 @@
     </label>
 
     <fieldset>
-      <legend>出店形態<span class="req">必須</span><span class="hint">当日の売上の10％を運営費として頂戴いたします(テント(物販)・テント(物販飲食)を除く)</span></legend>
+      <legend>出店形態<span class="req">必須</span><span class="hint">当日の売上の10％をお支払いいただきます(テント(物販)・テント(物販飲食)を除く)</span></legend>
       <div id="types"></div>
     </fieldset>
 
@@ -312,7 +312,7 @@
     s.textContent = ty.fee > 0 ? '出店料の合計:' + yen(ty.fee * days.length) + '円(' + yen(ty.fee) + '円 × ' + days.length + '日)' : '出店料:なし';
     box.appendChild(s);
     const d = document.createElement('div');
-    d.textContent = (ty.commission && CONFIG.rate > 0 ? 'このほかに、当日売上の' + CONFIG.rate + '%を運営費としていただきます。\n' : '') +
+    d.textContent = (ty.commission && CONFIG.rate > 0 ? 'このほかに、当日売上の' + CONFIG.rate + '%をお支払いいただきます。\n' : '') +
       '出店料は、出店が確定してからお支払いいただきます(応募の時点では、お支払いは不要です)。';
     box.appendChild(d);
     box.style.display = 'block';
